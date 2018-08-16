@@ -54,9 +54,8 @@ public class GameStore {
                 .findFirst();
     }
 
-
-    public void setCellState(Game game, User player, String address, boolean targetArea, CellState state) {
-        Optional<Cell> cell = em.createQuery(
+    public Optional<Cell> findCell(Game game, User player, String address, boolean targetArea) {
+        return em.createQuery(
                 "select c from Cell c " +
                         "where c.game = :game " +
                         "  and c.user = :user " +
@@ -68,6 +67,10 @@ public class GameStore {
                 .setParameter("address", address)
                 .getResultStream()
                 .findFirst();
+    }
+
+    public void setCellState(Game game, User player, String address, boolean targetArea, CellState state) {
+        Optional<Cell> cell = findCell(game, player, address, targetArea);
         if (cell.isPresent()) {
             cell.get().setState(state);
         } else {
@@ -93,7 +96,6 @@ public class GameStore {
                     c.setState(CellState.SHIP);
                     return c;
                 }).forEach(c -> em.persist(c));
-
     }
 
     private void clearField(Game game, User player, boolean targetArea) {
@@ -108,5 +110,27 @@ public class GameStore {
                 .setParameter("target", targetArea)
                 .getResultList();
         cells.forEach(c -> em.remove(c));
+    }
+
+    public List<Cell> getCells(Game game, User player) {
+        return em.createQuery(
+                "select c " +
+                        "from Cell c " +
+                        "where c.game = :game " +
+                        "  and c.user = :user ", Cell.class)
+                .setParameter("game", game)
+                .setParameter("user", player)
+                .getResultList();
+    }
+
+    public boolean checkIfHasShips(Game game, User user) {
+        List<Cell> cells = getCells(game, user);
+        boolean hasShips = false;
+        for (Cell cell : cells) {
+            if (cell.getState() == CellState.SHIP && cell.isTargetArea()) {
+                hasShips = true;
+            }
+        }
+        return hasShips;
     }
 }

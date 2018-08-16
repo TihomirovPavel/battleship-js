@@ -1,5 +1,4 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -43,7 +42,7 @@
             "method": "POST",
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
         }).then(function (response) {
@@ -63,11 +62,11 @@
             return response.json();
         }).then(function (game) {
             console.log(JSON.stringify(game));
-            if (game.status === "STARTED") {
-                location.href = "<c:url value='/app/game.jsp'/>";
-            } else if (game.status === "PLACEMENT" && game.playerActive) {
+            if (game.status === "PLACEMENT" && game.playerActive) {
                 document.getElementById("placement-field").classList.remove("w3-hide");
                 document.getElementById("wait-another").classList.add("w3-hide");
+            } else if (game.status === 'STARTED') {
+                location.href = "<c:url value='/app/game.jsp'/>";
             } else {
                 document.getElementById("placement-field").classList.add("w3-hide");
                 document.getElementById("wait-another").classList.remove("w3-hide");
