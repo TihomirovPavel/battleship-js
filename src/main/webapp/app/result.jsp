@@ -34,6 +34,7 @@
             if (game.status === "FINISHED" && game.playerActive) {
                 document.getElementById("win").classList.remove("w3-hide");
                 document.getElementById("loss").classList.add("w3-hide");
+                saveScore()
             } else if (game.status === "FINISHED" && !game.playerActive) {
                 document.getElementById("win").classList.add("w3-hide");
                 document.getElementById("loss").classList.remove("w3-hide");
@@ -43,6 +44,18 @@
             }
         });
     }
+    function saveScore() {
+        fetch("<c:url value='/api/high-score'/>", {
+            "method": "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(function (response) {
+            console.log("DONE");
+            checkStatus();
+        })
+    };
 
     function startGame() {
         fetch("<c:url value='/api/game'/>", {"method": "POST"})
@@ -53,7 +66,7 @@
 
     function redirectToMain() {
         location.href = "<c:url value="start.jsp"/>"
-    }
+    };
 
 </script>
 

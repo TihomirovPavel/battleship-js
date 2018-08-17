@@ -130,7 +130,8 @@ public class GameApi {
         User currentUser = userStore.getCurrentUser();
         Optional<Game> game = gameStore.getLastGame(currentUser);
         game.ifPresent(g -> {
-            User oppositeUser = g.getOpponnent(currentUser);
+            g.countMove(currentUser);
+            User oppositeUser = g.getOpponent(currentUser);
             Optional<Cell> enemyCell = gameStore.findCell(g, oppositeUser, address, false);
             if (enemyCell.isPresent()) {
                 Cell c = enemyCell.get();

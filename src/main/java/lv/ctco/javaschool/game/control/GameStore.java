@@ -18,6 +18,7 @@ public class GameStore {
     @PersistenceContext
     private EntityManager em;
 
+
     public Optional<Game> getIncompleteGame() {
         return em.createQuery(
                 "select g " +
@@ -50,6 +51,7 @@ public class GameStore {
                         "   or g.player2 = :user)" +
                         " order by g.id DESC", Game.class)
                 .setParameter("user", user)
+                .setMaxResults(1)
                 .getResultStream()
                 .findFirst();
     }
