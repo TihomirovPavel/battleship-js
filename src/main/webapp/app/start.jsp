@@ -3,6 +3,7 @@
 <html>
 <head>
     <script src="http://www.w3schools.com/lib/w3data.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <title>Title</title>
 </head>
 <body onload="checkScores()">
@@ -10,7 +11,7 @@
 <button type="button" onclick="startGame()">Start Game</button>
 
 
-<table id="hs-table">
+<table id="hs-table" class="w3-hide">
     <tr>
         <td>
             <hi>Highest Scores</hi>
@@ -35,7 +36,10 @@
             return response.json();
         }).then(function (highScores) {
             console.log(JSON.stringify(highScores));
-            w3DisplayData("hs-table", highScores);
+            if (highScores.listHs.length > 0) {
+                document.getElementById("hs-table").classList.remove("w3-hide");
+                w3DisplayData("hs-table", highScores);
+            }
         });
     }
 
