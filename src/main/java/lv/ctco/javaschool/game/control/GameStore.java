@@ -9,6 +9,7 @@ import lv.ctco.javaschool.game.entity.GameStatus;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,14 +42,13 @@ public class GameStore {
                 .findFirst();
     }
 
-    public Optional<Game> getOpenGameFor(User user) {
+    public Optional<Game> getLastGame(User user) {
         return em.createQuery(
                 "select g " +
                         "from Game g " +
-                        "where g.status <> :status " +
-                        "  and (g.player1 = :user " +
-                        "   or g.player2 = :user)", Game.class)
-                .setParameter("status", GameStatus.FINISHED)
+                        "where (g.player1 = :user " +
+                        "   or g.player2 = :user)" +
+                        " order by g.id DESC", Game.class)
                 .setParameter("user", user)
                 .getResultStream()
                 .findFirst();
@@ -123,12 +123,17 @@ public class GameStore {
                 .getResultList();
     }
 
-    public boolean checkIfHasShips(Game game, User user) {
-        List<Cell> cells = getCells(game, user);
+    public boolean checkIfHasShips(User user) {
+        Optional<Game> game = this.getLastGame(user);
         boolean hasShips = false;
-        for (Cell cell : cells) {
-            if (cell.getState() == CellState.SHIP && cell.isTargetArea()) {
-                hasShips = true;
+        List<Cell> cells = new ArrayList<>();
+        if (game.isPresent()) {
+            Game g = game.get();
+            cells = getCells(g, user);
+            for (Cell cell : cells) {
+                if (cell.getState() == CellState.SHIP && !(cell.isTargetArea())) {
+                    hasShips = true;
+                }
             }
         }
         return hasShips;

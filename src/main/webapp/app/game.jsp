@@ -37,7 +37,6 @@
 <div id="wait-another" class="w3-hide">
     <h1>Please wait for opponent to finish his move</h1>
 </div>
-
 <div id="player-field">
     <table>
         <tr>
@@ -136,9 +135,9 @@
                 window.setTimeout(function () {
                     checkStatus();
                 }, 1000);
-            } else if (gameDto.status == "FINISHED") {
+            } else if (gameDto.status === "FINISHED") {
                 console.log("should finish");
-                //TODO
+                location.href = "<c:url value='/app/result.jsp'/>";
             } else {
                 return;
             }
